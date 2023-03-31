@@ -13,14 +13,26 @@
 
 ## Скріншоти
 
-![alt text](https://github.com/CoffeeScriptHero/simple-place-java/tree/master/screenshots/img1.png)
+**Головна сторінка:**
 
-![alt text](https://github.com/CoffeeScriptHero/simple-place-java/tree/master/screenshots/img2.png)
+![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img1.png)
 
-![alt text](https://github.com/CoffeeScriptHero/simple-place-java/tree/master/screenshots/img3.png)
+**Публікації на головній сторінці:**
 
-![alt text](https://github.com/CoffeeScriptHero/simple-place-java/tree/master/screenshots/img4.png)
+![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img2.png)
 
-![alt text](https://github.com/CoffeeScriptHero/simple-place-java/tree/master/screenshots/img5.png)
+**Відкрита публікація:**
 
-![alt text](https://github.com/CoffeeScriptHero/simple-place-java/tree/master/screenshots/img6.png)
+![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img3.png)
+
+**Сторінка користувача:**
+
+![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img4.png)
+
+**Додавання нової публікації:**
+
+![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img5.png)
+
+**Пошук користувачей:**
+
+![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img6.png)
