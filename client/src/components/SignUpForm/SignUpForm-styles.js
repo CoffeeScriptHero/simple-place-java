@@ -61,3 +61,13 @@ export const SubmitButton = styled.button.attrs({
     transform: translateY(-2px);
   }
 `;
+
+export const RememberMeWrapper = styled.div`
+  margin: 10px 0;
+`;
+
+export const RememberMeText = styled.span`
+  margin-left: 12px;
+  font-weight: 500;
+`;
+

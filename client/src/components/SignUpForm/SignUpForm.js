@@ -7,10 +7,12 @@ import {
   LogInOptions,
   LogInLink,
   RequiredMessage,
+  RememberMeText,
+  RememberMeWrapper
 } from "./SignUpForm-styles.js";
 import FormInput from "../FormInput/FormInput.js";
 import { signUpSchema, logInSchema } from "./Yup.js";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { receiveData } from "../../services/UserService.js";
 import { getCookie, setCookie } from "../../services/CookiesService.js";
 import { userOperations } from "../../store/user";
@@ -22,6 +24,7 @@ export const SignUpForm = () => {
   const [showLogIn, setShowLogIn] = useState(true);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const rememberMeRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -34,6 +37,7 @@ export const SignUpForm = () => {
     const userData = {
       username: values.username,
       password: values.password,
+      rememberMe: rememberMeRef.current.checked
     };
     const entryType = showLogIn ? "signup" : "login";
     receiveData(userData, `/api/registration/${entryType}`)
@@ -116,6 +120,10 @@ export const SignUpForm = () => {
                   />
                 </div>
               )}
+              <RememberMeWrapper>
+                <input type="checkbox" ref={rememberMeRef} style={{cursor: "pointer"}}/>
+                <RememberMeText>Remember me</RememberMeText>
+              </RememberMeWrapper>
               <div>
                 <SubmitButton>
                   {showLogIn ? "Create account" : "Log in"}
