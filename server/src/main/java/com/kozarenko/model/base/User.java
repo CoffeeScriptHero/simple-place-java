@@ -1,10 +1,10 @@
 package com.kozarenko.model.base;
 
-import com.kozarenko.model.additional.Like;
+import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
+@Data
 @Entity
 @Table(name = "users")
 public class User {

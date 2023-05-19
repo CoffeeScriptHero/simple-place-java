@@ -1,0 +1,30 @@
+###
+POST localhost:8080/api/authentication/registration
+Content-Type: application/json
+
+{
+  "username": "denys",
+  "password": "1234",
+  "rememberMe": false
+}
+
+###
+POST localhost:8080/api/authentication/login
+Content-Type: application/json
+
+{
+  "username": "denys",
+  "password": "1234",
+  "rememberMe": false
+}
+
+###
+POST localhost:8080/api/authentication/login
+Content-Type: application/json
+
+{
+  "username": "denysko",
+  "password": "1234",
+  "rememberMe": false
+}
+
