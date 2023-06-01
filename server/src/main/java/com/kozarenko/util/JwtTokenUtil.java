@@ -25,29 +25,6 @@ public class JwtTokenUtil {
   @Value("${jwt.expire.remember}")
   private Long expirationRemember;
 
-  public boolean isTokenExists(String authHeader) {
-    return authHeader != null && authHeader.startsWith(BEARER);
-  }
-
-  public String getUsernameFromToken(String authHeader) {
-    return getClaimsFromToken(authHeader.startsWith(BEARER) ? authHeader.substring(BEARER.length())
-            : authHeader, Claims::getSubject);
-
-  }
-
-  public Date getExpirationDateFromToken(String token) {
-    return getClaimsFromToken(token, Claims::getExpiration);
-  }
-
-  public <T> T getClaimsFromToken(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = getAllClaimsFromToken(token);
-    return claimsResolver.apply(claims);
-  }
-
-  private Claims getAllClaimsFromToken(String token) {
-    return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-  }
-
   public String generateToken(String username, boolean isToRemember) {
     Date now = new Date();
 
@@ -57,5 +34,9 @@ public class JwtTokenUtil {
             .setExpiration(new Date(now.getTime() + (isToRemember ? expirationRemember : expirationDefault)))
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact();
+  }
+
+  public String checkTokenValidAndReturnUsername(String authHeader) {
+    return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authHeader).getBody().getSubject();
   }
 }

@@ -1,5 +1,8 @@
 target/
-src/main/resources/application.properties
+server/src/main/resources/application.properties
+server/src/main/java/test.http
+server/src/main/resources/.env
+
 .idea/
 .idea/modules.xml
 ../.idea/jarRepositories.xml
@@ -8,8 +11,7 @@ src/main/resources/application.properties
 *.iws
 *.iml
 *.ipr
-*.properties
 
 .env
 **/node_modules
-package-lock.json 
+package-lock.json

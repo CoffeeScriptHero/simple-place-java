@@ -1,0 +1,5 @@
+###
+GET localhost:8080/api/registration/check-username?u=Denys
+
+###
+GET localhost:8080/api/registration/check-username?u=Denysko

@@ -1,5 +1,13 @@
 import { getCookie } from "./CookiesService";
 import { userOperations } from "../store/user";
+import axiosIns from "../axiosInstance";
+
+
+export const authenticate = async (data, request) => {
+  const response = await axiosIns.post(`api/authentication/${request}`, data);
+
+  return response;
+}
 
 export const receiveData = async (data, request) => {
   const response = await fetch(request, {
