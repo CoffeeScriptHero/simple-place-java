@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
-import static com.kozarenko.util.Constants.Path.H2_PAGE;
-import static com.kozarenko.util.Constants.Path.MAIN_PAGE;
+import static com.kozarenko.util.Constants.Path.H2_PATH;
+import static com.kozarenko.util.Constants.Path.AUTHENTICATION_PATH;
 import static com.kozarenko.util.Constants.Auth.AUTHORIZATION_HEADER;
 import static com.kozarenko.util.Constants.Auth.BEARER;
 
@@ -26,11 +27,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final JwtTokenUtil jwtTokenUtil;
 
+  private final List<String> allowedPaths = List.of(H2_PATH, AUTHENTICATION_PATH);
+
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain chain)
           throws ServletException, IOException {
 
-    if (req.getRequestURI().startsWith(H2_PAGE) || req.getRequestURI().equals(MAIN_PAGE)) {
+    if (allowedPaths.stream().anyMatch(req.getRequestURI()::startsWith)) {
       chain.doFilter(req, resp);
       return;
     }

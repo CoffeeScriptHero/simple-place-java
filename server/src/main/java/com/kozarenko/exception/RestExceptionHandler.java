@@ -1,6 +1,8 @@
 package com.kozarenko.exception;
 
 import com.kozarenko.exception.custom.NoUserWithSuchUsernameException;
+import com.kozarenko.exception.custom.PasswordVerificationException;
+import com.kozarenko.exception.custom.UsernameTakenException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +16,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import static com.kozarenko.util.Constants.Exception.NO_REQUEST_PARAMETER;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.CONFLICT;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -36,6 +40,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(NoUserWithSuchUsernameException.class)
   public ResponseEntity<Object> handleNoUserWithSuchUsername(NoUserWithSuchUsernameException ex) {
     return buildResponseEntity(new ApiError(NOT_FOUND, ex));
+  }
+
+  @ExceptionHandler(UsernameTakenException.class)
+  public ResponseEntity<Object> handleUsernameTaken(UsernameTakenException ex) {
+    return buildResponseEntity(new ApiError(CONFLICT, ex));
+  }
+
+  @ExceptionHandler(PasswordVerificationException.class)
+  public ResponseEntity<Object> handlePasswordVerification(PasswordVerificationException ex) {
+    return buildResponseEntity(new ApiError(UNAUTHORIZED, ex));
   }
 
   private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {

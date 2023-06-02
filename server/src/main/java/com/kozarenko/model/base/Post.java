@@ -1,28 +1,33 @@
 package com.kozarenko.model.base;
 
-import com.kozarenko.model.additional.Like;
+import com.kozarenko.model.additional.PostLike;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.List;
 
-  //@Entity
-  //@Table(name = "posts")
+@Data
+@Entity
+@Table(name = "posts")
 public class Post {
 
-  //  @Id
-  //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  //  private Long id;
-  //
-  //  @Column(name = "description")
-  //  private String description;
-  //
-  //  @Column(name = "image")
-  //  private String image;
-  //
-  //  @ManyToOne
-  //  @JoinColumn(name = "user_id", referencedColumnName = "id")
-  //  private User author;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-  //  @OneToMany(mappedBy = "likedPost", cascade = )
-  //  private List<Like> likes;
+  @Column(name = "description")
+  private String description;
+
+  @Column(name = "image")
+  private String image;
+
+  @ManyToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  private User user;
+
+  @OneToMany(mappedBy = "likedPost", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PostLike> likes;
+
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Comment> comments;
 }

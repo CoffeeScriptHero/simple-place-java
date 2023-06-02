@@ -1,5 +1,6 @@
 package com.kozarenko.service;
 
+import com.kozarenko.exception.custom.UsernameTakenException;
 import com.kozarenko.model.base.User;
 import com.kozarenko.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,12 @@ public class UserService {
 
   public boolean existsByUsername(String username) {
     return userRepository.existsByUsername(username);
+  }
+
+  public void checkUsernameTaken(String username) throws UsernameTakenException {
+    if (userRepository.existsByUsername(username)) {
+      throw new UsernameTakenException();
+    }
   }
 
   public Optional<User> findByUsername(String username) {
