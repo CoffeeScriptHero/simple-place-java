@@ -15,8 +15,8 @@ import java.io.Serializable;
 public class CommentLikePk implements Serializable {
 
   @Column(name = "user_id")
-  private Long userId;
+  private String userId;
 
   @Column(name = "comment_id")
-  private Long commentId;
+  private String commentId;
 }

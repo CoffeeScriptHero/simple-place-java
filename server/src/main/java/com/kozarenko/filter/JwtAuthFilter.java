@@ -19,6 +19,7 @@ import java.util.List;
 import static com.kozarenko.util.Constants.Path.H2_PATH;
 import static com.kozarenko.util.Constants.Path.AUTHENTICATION_PATH;
 import static com.kozarenko.util.Constants.Auth.AUTHORIZATION_HEADER;
+import static com.kozarenko.util.Constants.Auth.USERNAME_ATTRIBUTE;
 import static com.kozarenko.util.Constants.Auth.BEARER;
 
 @Component
@@ -41,9 +42,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     String authHeader = req.getHeader(AUTHORIZATION_HEADER);
 
     if (authHeader != null && !authHeader.contains("null")) {
+      System.out.println("Auth Header: " + authHeader);
       authHeader = authHeader.substring(BEARER.length());
       try {
-        jwtTokenUtil.checkTokenValidAndReturnUsername(authHeader);
+        System.out.println(jwtTokenUtil.checkTokenValidAndReturnUsername(authHeader));
+        req.setAttribute(USERNAME_ATTRIBUTE, jwtTokenUtil.checkTokenValidAndReturnUsername(authHeader));
       } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException
                | SignatureException | IllegalArgumentException e) {
         resp.setStatus(401);
@@ -51,6 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       }
       chain.doFilter(req, resp);
     } else {
+      req.setAttribute(USERNAME_ATTRIBUTE, null);
       resp.setStatus(401);
     }
   }

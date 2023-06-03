@@ -2,9 +2,11 @@ package com.kozarenko.model.base;
 
 import com.kozarenko.model.additional.CommentLike;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -12,8 +14,9 @@ import java.util.List;
 public class Comment {
 
   @Id
-  @GeneratedValue
-  private Long id;
+  @GeneratedValue(generator = "uuid-hibernate-generator")
+  @GenericGenerator(name = "uuid-hibernate-generator", strategy = "org.hibernate.id.UUIDGenerator")
+  private String id;
 
   @ManyToOne
   @JoinColumn(name = "user_id")

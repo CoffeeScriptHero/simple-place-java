@@ -59,7 +59,6 @@ export const SignUpForm = () => {
       navigate("/");
 
     } catch (e) {
-        console.log(e.response.data)
       setShowError(true);
       setErrorMessage(e.response.data.message);
     }

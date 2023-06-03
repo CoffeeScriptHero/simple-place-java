@@ -20,6 +20,7 @@ public class Constants {
   public static class Auth {
     public static final String NO_SUCH_USERNAME = "User with such username does not exist";
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String USERNAME_ATTRIBUTE = "username";
     public static final String BEARER = "Bearer ";
   }
 
@@ -28,5 +29,8 @@ public class Constants {
     public static final String USER_NOT_FOUND = "User with such username was not found";
     public static final String USERNAME_TAKEN = "User with such username already exists.";
     public static final String WRONG_PASSWORD = "An incorrect password was entered";
+    public static final String POST_NOT_FOUND = "Post with such id was not found";
+    public static final String ACCESS_DENIED = "Access denied.";
+
   }
 }

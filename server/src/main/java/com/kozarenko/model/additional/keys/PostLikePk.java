@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @Embeddable
@@ -15,8 +16,8 @@ import java.io.Serializable;
 public class PostLikePk implements Serializable {
 
   @Column(name = "user_id")
-  private Long userId;
+  private String userId;
 
   @Column(name = "post_id")
-  private Long postId;
+  private String postId;
 }

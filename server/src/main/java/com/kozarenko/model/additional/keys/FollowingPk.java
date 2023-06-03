@@ -15,8 +15,8 @@ import java.io.Serializable;
 public class FollowingPk implements Serializable {
 
   @Column(name = "follower_id")
-  private Long followerId;
+  private String followerId;
 
   @Column(name = "followed_id")
-  private Long followedId;
+  private String followedId;
 }

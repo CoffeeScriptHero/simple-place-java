@@ -16,7 +16,20 @@ axiosIns.interceptors.request.use(
 
       return config;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+      console.log("from axiosInstance.js: ", error)
+      return Promise.reject(error)
+    }
 );
+
+axiosIns.interceptors.response.use((config) => config, (error) => {
+  if (error.response.status === 401) {
+    localStorage.removeItem(TOKEN);
+  }
+
+  console.dir("ERROR: ", error.response)
+
+  return Promise.reject(error)
+})
 
 export default axiosIns;

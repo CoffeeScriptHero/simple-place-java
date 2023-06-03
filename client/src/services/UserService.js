@@ -9,6 +9,16 @@ export const authenticate = async (data, request) => {
   return response;
 }
 
+export const logInByToken = async () => {
+  try {
+    const response = await axiosIns.get("api/authentication/jwt")
+
+    return response;
+  } catch (e) {
+    return e;
+  }
+}
+
 export const receiveData = async (data, request) => {
   const response = await fetch(request, {
     method: "POST",

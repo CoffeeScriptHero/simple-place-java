@@ -1,7 +1,7 @@
 package com.kozarenko.mapper;
 
 import com.kozarenko.dto.user.UserCredentialsDto;
-import com.kozarenko.dto.user.UserResponseDto;
+import com.kozarenko.dto.user.UserAccountDto;
 import com.kozarenko.model.base.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,9 +17,14 @@ public class UserMapper {
     return modelMapper.map(userDto, User.class);
   }
 
-  public UserResponseDto mapToUserResponseDto(User user, String jwt) {
-    UserResponseDto userDto = modelMapper.map(user, UserResponseDto.class);
+  public UserAccountDto mapToUserAccountDto(User user, String jwt) {
+    UserAccountDto userDto = modelMapper.map(user, UserAccountDto.class);
     userDto.setJwt(jwt);
+
     return userDto;
+  }
+
+  public UserAccountDto mapToUserAccountDto(User user) {
+    return modelMapper.map(user, UserAccountDto.class);
   }
 }

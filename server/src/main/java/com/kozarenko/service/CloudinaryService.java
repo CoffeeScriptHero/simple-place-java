@@ -23,21 +23,28 @@ public class CloudinaryService {
   private final Cloudinary cloudinary = new Cloudinary(CLOUDINARY_SCHEME + dotenv.get(API_KEY) + ":" +
           dotenv.get(API_SECRET) + "@" + dotenv.get(CLOUD_NAME));
 
-  public Map<String, Object> uploadProfilePic(String base64Img, String publicId) {
-    return upload(base64Img, publicId, PROFILE_PICS_PRESET);
+  public String uploadProfilePic(String base64Img, String publicId) {
+    return upload(base64Img, PROFILE_PICS_PRESET, publicId);
   }
 
-  public Map<String, Object> uploadPostPic(String base64Img, String publicId) {
-    return upload(base64Img, publicId, POSTS_PRESET);
+  public String uploadPostPic(String base64Img, String publicId) {
+    return upload(base64Img, POSTS_PRESET, publicId);
   }
 
-  private Map<String, Object> upload(String base64Img, String uploadPreset, String publicId) {
+  public void deletePic(String publicId) throws IOException {
+    cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+  }
+
+  private String upload(String base64Img, String uploadPreset, String publicId) {
     try {
-      return cloudinary.uploader().unsignedUpload(
+      return cloudinary.uploader().upload(
               base64Img,
-              uploadPreset,
-              ObjectUtils.asMap("public_id", publicId)
-      );
+              ObjectUtils.asMap(
+                      "public_id", publicId,
+                      "upload_preset", uploadPreset,
+                      "overwrite", true,
+                      "invalidate", true)
+      ).get("secure_url").toString();
     } catch (IOException ex) {
       System.out.println(ex.getMessage());
     }

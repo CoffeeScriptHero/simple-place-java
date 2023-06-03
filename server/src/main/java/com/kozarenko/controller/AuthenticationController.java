@@ -2,7 +2,7 @@ package com.kozarenko.controller;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.kozarenko.dto.user.UserCredentialsDto;
-import com.kozarenko.dto.user.UserResponseDto;
+import com.kozarenko.dto.user.UserAccountDto;
 import com.kozarenko.exception.custom.NoUserWithSuchUsernameException;
 import com.kozarenko.exception.custom.PasswordVerificationException;
 import com.kozarenko.exception.custom.UsernameTakenException;
@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.kozarenko.util.Constants.Auth.USERNAME_ATTRIBUTE;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class AuthenticationController {
   private final JwtTokenUtil jwtTokenUtil;
 
   @PostMapping("registration")
-  public ResponseEntity<UserResponseDto> saveUser(@RequestBody UserCredentialsDto userDto) throws
+  public ResponseEntity<UserAccountDto> saveUser(@RequestBody UserCredentialsDto userDto) throws
           UsernameTakenException {
     userService.checkUsernameTaken(userDto.getUsername());
     User user = userMapper.mapToUser(userDto);
@@ -38,8 +40,8 @@ public class AuthenticationController {
   }
 
   @PostMapping("login")
-  public ResponseEntity<UserResponseDto> logIn(@RequestBody UserCredentialsDto userDto) throws
-          NoUserWithSuchUsernameException,
+  public ResponseEntity<UserAccountDto> logIn(@RequestBody UserCredentialsDto userDto)
+          throws NoUserWithSuchUsernameException,
           PasswordVerificationException {
     User user = userService.findByUsername(userDto.getUsername()).orElseThrow(NoUserWithSuchUsernameException::new);
     verify(user.getPassword(), userDto.getPassword());
@@ -47,8 +49,17 @@ public class AuthenticationController {
     return new ResponseEntity<>(getUserResponseDto(user, userDto), HttpStatus.OK);
   }
 
-  private UserResponseDto getUserResponseDto(User user, UserCredentialsDto userDto) {
-    return userMapper.mapToUserResponseDto(
+  @GetMapping("jwt")
+  public ResponseEntity<UserAccountDto> logInByJwt(@RequestAttribute(USERNAME_ATTRIBUTE) String username)
+          throws NoUserWithSuchUsernameException {
+    System.out.println(username);
+    User user = userService.findByUsername(username).orElseThrow(NoUserWithSuchUsernameException::new);
+
+    return new ResponseEntity<>(userMapper.mapToUserAccountDto(user), HttpStatus.OK);
+  }
+
+  private UserAccountDto getUserResponseDto(User user, UserCredentialsDto userDto) {
+    return userMapper.mapToUserAccountDto(
             user, createJwt(userDto.getUsername(), userDto.isRememberMe()));
   }
 

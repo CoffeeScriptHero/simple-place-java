@@ -2,9 +2,11 @@ package com.kozarenko.model.base;
 
 import com.kozarenko.model.additional.Following;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -12,8 +14,9 @@ import java.util.List;
 public class User {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(generator = "uuid-hibernate-generator")
+  @GenericGenerator(name = "uuid-hibernate-generator", strategy = "org.hibernate.id.UUIDGenerator")
+  private String id;
 
   @Column(name = "username")
   private String username;
@@ -21,10 +24,10 @@ public class User {
   @Column(name = "password")
   private String password;
 
-  @Column(name = "profileImg")
-  private String profileImg;
+  @Column(name = "profile_img_url")
+  private String profileImgUrl;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Post> posts;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
