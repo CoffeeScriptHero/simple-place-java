@@ -13,6 +13,8 @@ public class Constants {
     public static final String CLOUD_NAME = "CLOUD_NAME";
     public static final String API_KEY = "API_KEY";
     public static final String API_SECRET = "API_SECRET";
+    public static final String PROFILE_PICS_PRESET = "profilePicsPreset";
+    public static final String POSTS_PRESET = "postsPreset";
   }
 
   public static class Auth {
