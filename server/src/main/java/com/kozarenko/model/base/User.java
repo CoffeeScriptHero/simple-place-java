@@ -38,4 +38,10 @@ public class User {
 
   @OneToMany(mappedBy = "followerUser", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Following> followings;
+
+  public User() {}
+
+  public User(String id) {
+    this.id = id;
+  }
 }

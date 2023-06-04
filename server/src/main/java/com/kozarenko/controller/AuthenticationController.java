@@ -43,7 +43,7 @@ public class AuthenticationController {
   public ResponseEntity<UserAccountDto> logIn(@RequestBody UserCredentialsDto userDto)
           throws NoUserWithSuchUsernameException,
           PasswordVerificationException {
-    User user = userService.findByUsername(userDto.getUsername()).orElseThrow(NoUserWithSuchUsernameException::new);
+    User user = userService.findByUsername(userDto.getUsername());
     verify(user.getPassword(), userDto.getPassword());
 
     return new ResponseEntity<>(getUserResponseDto(user, userDto), HttpStatus.OK);
@@ -53,7 +53,7 @@ public class AuthenticationController {
   public ResponseEntity<UserAccountDto> logInByJwt(@RequestAttribute(USERNAME_ATTRIBUTE) String username)
           throws NoUserWithSuchUsernameException {
     System.out.println(username);
-    User user = userService.findByUsername(username).orElseThrow(NoUserWithSuchUsernameException::new);
+    User user = userService.findByUsername(username);
 
     return new ResponseEntity<>(userMapper.mapToUserAccountDto(user), HttpStatus.OK);
   }

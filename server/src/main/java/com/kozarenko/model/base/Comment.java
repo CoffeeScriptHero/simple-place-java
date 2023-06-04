@@ -31,4 +31,10 @@ public class Comment {
 
   @OneToMany(mappedBy = "likedComment", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CommentLike> likes;
+
+  public Comment() {}
+
+  public Comment(String id) {
+    this.id = id;
+  }
 }

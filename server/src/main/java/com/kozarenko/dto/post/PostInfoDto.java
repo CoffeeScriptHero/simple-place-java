@@ -1,8 +1,7 @@
 package com.kozarenko.dto.post;
 
+import com.kozarenko.dto.comment.CommentInfoDto;
 import com.kozarenko.dto.user.UserAuthorDto;
-import com.kozarenko.model.additional.PostLike;
-import com.kozarenko.model.base.Comment;
 import lombok.Data;
 
 import java.util.List;
@@ -13,6 +12,7 @@ public class PostInfoDto {
   private String description;
   private String imageUrl;
   private UserAuthorDto author;
-  private List<PostLike> likes;
-  private List<Comment> comments;
+  private boolean isLiked;
+  private int likesNumber;
+  private List<CommentInfoDto> comments;
 }

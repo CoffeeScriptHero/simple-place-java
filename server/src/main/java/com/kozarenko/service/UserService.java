@@ -1,5 +1,6 @@
 package com.kozarenko.service;
 
+import com.kozarenko.exception.custom.NoUserWithSuchUsernameException;
 import com.kozarenko.exception.custom.UsernameTakenException;
 import com.kozarenko.model.base.User;
 import com.kozarenko.repository.UserRepository;
@@ -14,8 +15,10 @@ public class UserService {
 
   private final UserRepository userRepository;
 
-  public boolean existsByUsername(String username) {
-    return userRepository.existsByUsername(username);
+  public void existsByUsername(String username) throws NoUserWithSuchUsernameException {
+    if (!userRepository.existsByUsername(username)) {
+      throw new NoUserWithSuchUsernameException();
+    }
   }
 
   public void checkUsernameTaken(String username) throws UsernameTakenException {
@@ -24,8 +27,8 @@ public class UserService {
     }
   }
 
-  public Optional<User> findByUsername(String username) {
-    return userRepository.findByUsername(username);
+  public User findByUsername(String username) throws NoUserWithSuchUsernameException {
+    return userRepository.findByUsername(username).orElseThrow(NoUserWithSuchUsernameException::new);
   }
 
   public void save(User user) {

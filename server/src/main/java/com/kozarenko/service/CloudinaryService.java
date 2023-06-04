@@ -14,6 +14,8 @@ import static com.kozarenko.util.Constants.Cloudinary.API_KEY;
 import static com.kozarenko.util.Constants.Cloudinary.API_SECRET;
 import static com.kozarenko.util.Constants.Cloudinary.POSTS_PRESET;
 import static com.kozarenko.util.Constants.Cloudinary.PROFILE_PICS_PRESET;
+import static com.kozarenko.util.Constants.Cloudinary.POSTS_FOLDER;
+import static com.kozarenko.util.Constants.Cloudinary.PROFILE_PICS_FOLDER;
 
 @Service
 public class CloudinaryService {
@@ -31,8 +33,16 @@ public class CloudinaryService {
     return upload(base64Img, POSTS_PRESET, publicId);
   }
 
-  public void deletePic(String publicId) throws IOException {
-    cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+  public void deletePostPic(String publicId) throws IOException {
+    deletePic(POSTS_FOLDER + publicId);
+  }
+
+  public void deleteProfilePic(String publicId) throws IOException {
+    deletePic(PROFILE_PICS_FOLDER + publicId);
+  }
+
+  private void deletePic(String publicId) throws IOException {
+    cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("invalidate", true));
   }
 
   private String upload(String base64Img, String uploadPreset, String publicId) {

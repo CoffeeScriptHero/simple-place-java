@@ -15,6 +15,15 @@ public class Constants {
     public static final String API_SECRET = "API_SECRET";
     public static final String PROFILE_PICS_PRESET = "profilePicsPreset";
     public static final String POSTS_PRESET = "postsPreset";
+    public static final String POSTS_FOLDER = "posts/";
+    public static final String PROFILE_PICS_FOLDER = "profilePics/";
+  }
+
+  public static class Request {
+    public static final String PAGE_NUMBER_QUERY = "p";
+    public static final String RESULTS_PER_PAGE_QUERY = "n";
+    public static final Integer PAGE_NUMBER_DEFAULT = 0;
+    public static final Integer POSTS_PER_PAGE_DEFAULT = 3;
   }
 
   public static class Auth {
