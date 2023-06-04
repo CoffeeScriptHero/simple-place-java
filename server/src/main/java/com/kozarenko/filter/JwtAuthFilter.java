@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.kozarenko.util.Constants.Path.H2_PATH;
-import static com.kozarenko.util.Constants.Path.AUTHENTICATION_PATH;
+import static com.kozarenko.util.Constants.Request.OPTIONS_METHOD;
 import static com.kozarenko.util.Constants.Auth.AUTHORIZATION_HEADER;
 import static com.kozarenko.util.Constants.Auth.USERNAME_ATTRIBUTE;
 import static com.kozarenko.util.Constants.Auth.BEARER;
@@ -28,13 +28,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final JwtTokenUtil jwtTokenUtil;
 
-  private final List<String> allowedPaths = List.of(H2_PATH, AUTHENTICATION_PATH);
+  private final List<String> allowedPaths = List.of(H2_PATH, "/api/authentication/login", "/api/authentication/registration");
 
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain chain)
           throws ServletException, IOException {
 
-    if (allowedPaths.stream().anyMatch(req.getRequestURI()::startsWith)) {
+    if (allowedPaths.stream().anyMatch(req.getRequestURI()::startsWith) || req.getMethod().equals(OPTIONS_METHOD)) {
       chain.doFilter(req, resp);
       return;
     }
@@ -42,10 +42,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     String authHeader = req.getHeader(AUTHORIZATION_HEADER);
 
     if (authHeader != null && !authHeader.contains("null")) {
-      System.out.println("Auth Header: " + authHeader);
       authHeader = authHeader.substring(BEARER.length());
       try {
-        System.out.println(jwtTokenUtil.checkTokenValidAndReturnUsername(authHeader));
         req.setAttribute(USERNAME_ATTRIBUTE, jwtTokenUtil.checkTokenValidAndReturnUsername(authHeader));
       } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException
                | SignatureException | IllegalArgumentException e) {

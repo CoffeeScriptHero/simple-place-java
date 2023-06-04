@@ -28,6 +28,10 @@ public class PostService {
     return postRepository.findAll(PageRequest.of(page, postsPerPage, Sort.by("createdDate"))).toList();
   }
 
+  public List<Post> getPostsByUsername(String username) {
+    return postRepository.findPostsByAuthorUsername(username);
+  }
+
   public Post save(Post post) {
     post.setCreatedDate(LocalDateTime.now());
     return postRepository.save(post);

@@ -20,7 +20,7 @@ public class PostLikeService {
   private final PostService postService;
   private final UserService userService;
 
-  public boolean setLike(String userId, String postId) {
+  public boolean saveLike(String userId, String postId) {
     if (!existsByIds(userId, postId)) {
       save(userId, postId);
       return true;

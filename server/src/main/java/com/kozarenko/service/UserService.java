@@ -7,6 +7,7 @@ import com.kozarenko.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +30,14 @@ public class UserService {
 
   public User findByUsername(String username) throws NoUserWithSuchUsernameException {
     return userRepository.findByUsername(username).orElseThrow(NoUserWithSuchUsernameException::new);
+  }
+
+  public List<User> findByRegex(String regex) {
+    return userRepository.findUsersByUsernameMatchesRegex(regex);
+  }
+
+  public User getReferenceById(String id) {
+    return userRepository.getReferenceById(id);
   }
 
   public void save(User user) {

@@ -36,7 +36,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     ));
   }
 
-  @ExceptionHandler({NoUserWithSuchUsernameException.class, NoPostWithSuchIdException.class})
+  @ExceptionHandler({
+          NoUserWithSuchUsernameException.class,
+          NoPostWithSuchIdException.class,
+          NoCommentWithSuchIdException.class
+  })
   public ResponseEntity<Object> handleNotFoundExceptions(Exception ex) {
     return buildResponseEntity(new ApiError(NOT_FOUND, ex));
   }

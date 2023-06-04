@@ -1,15 +1,16 @@
 package com.kozarenko.dto.user;
 
+import com.kozarenko.dto.post.PostInfoDto;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class UserAccountDto {
-  private String id;
+public class UserProfileDto {
   private String username;
   private String profileImg;
-  private String jwt;
+  private String id;
   private List<String> following;
   private List<String> followers;
+  private List<PostInfoDto> posts;
 }
