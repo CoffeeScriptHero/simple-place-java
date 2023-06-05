@@ -1,8 +1,8 @@
 import { CommentsWrapper, ShowAll } from "./Comments-styles";
 import Comment from "../Comment/Comment";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { usersModalOperations } from "../../store/usersModal";
-import { getCookie } from "../../services/CookiesService";
+import { userSelectors } from "../../store/user";
 
 const Comments = ({
   showAll,
@@ -14,25 +14,26 @@ const Comments = ({
   postModalHandler = null,
 }) => {
   const dispatch = useDispatch();
-  const mainUserId = getCookie("id");
+  const user = useSelector(userSelectors.getUser());
 
   const modalHandler = (commentId) => {
     dispatch(usersModalOperations.setNewModalType("Likes"));
-    dispatch(usersModalOperations.getLiked(commentId, "comment"));
+    dispatch(usersModalOperations.getCommentLikes(commentId));
     setShowModal(true);
   };
 
   const commentsList = comments.map((c) => (
     <Comment
-      key={c.commentId}
-      commentId={c.commentId}
+      key={c.id}
+      commentId={c.id}
       text={c.text}
-      likes={c.commentLikes}
-      username={c.username}
-      profileImg={c.profileImg}
+      liked={c.likes.includes(user.id)}
+      likes={c.likes}
+      username={c.author.username}
+      profileImg={c.author.profileImgUrl}
       setComments={setComments}
-      mainUserId={mainUserId}
-      commentUserId={c.commentUserId}
+      mainUserId={user.id}
+      commentUserId={c.author.id}
       postId={postId}
       userId={userId}
       comments={comments}

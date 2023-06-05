@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
-  receiveData,
   changeUsername,
   deleteProfileImg,
+  getUserpage,
 } from "../../services/UserService";
-import { getUserPosts } from "../../services/PostsService";
 import Loader from "../../components/Loader/Loader";
 import ProfileIcon from "../../components/ProfileIcon/ProfileIcon";
 import Icon from "../../components/Icon/Icon";
@@ -31,6 +30,7 @@ import NotFound from "../NotFound/NotFound";
 import { setCookie } from "../../services/CookiesService";
 import { confirmationModalOperations } from "../../store/confirmationModal";
 import { postModalSelectors } from "../../store/postModal";
+import { TOKEN } from "../../util/constants";
 
 const User = () => {
   const [userExist, setUserExist] = useState(false);
@@ -61,13 +61,10 @@ const User = () => {
   };
 
   const followingHandler = () => {
+    userData.followers.length += mainUser.following.includes(userData.id)
+      ? -1
+      : 1;
     dispatch(userOperations.followUser(userData.id));
-    userData.followers.length += 1;
-  };
-
-  const unfollowingHandler = () => {
-    dispatch(userOperations.unfollowUser(userData.id));
-    userData.followers.length -= 1;
   };
 
   const usernameHandler = () => {
@@ -80,20 +77,17 @@ const User = () => {
       } else if (!(newUsername.length >= 4 && newUsername.length <= 20)) {
         setErrorText("Min 4 characters and 20 max required");
       } else {
-        changeUsername({ newUsername, userId: mainUser.id })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.status === 200) {
-              dispatch(userOperations.updateUsername(data.username));
-              setErrorText(null);
-              setEditableUsername(false);
-              setCookie("username", data.username, {
-                expires: new Date("12/31/40"),
-              });
-              navigate(`/${data.username}`);
-            } else {
-              setErrorText(data.message);
-            }
+        changeUsername({ username: newUsername })
+          .then((res) => {
+            dispatch(userOperations.updateUsername(newUsername));
+            setErrorText(null);
+            setEditableUsername(false);
+            localStorage.setItem(TOKEN, res.data);
+            navigate(`/${newUsername}`);
+          })
+          .catch((e) => {
+            console.dir("er: ", e);
+            setErrorText(e.response.data.message);
           });
       }
     } else {
@@ -108,28 +102,23 @@ const User = () => {
   };
 
   useEffect(() => {
-    receiveData({ username: username }, "/api/main_user/get-userpage")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === 200) {
-          setUserData(data);
+    getUserpage(username)
+      .then((res) => {
+        if (res.status === 200) {
+          setUserData(res.data);
           setUserExist(true);
-          setProfilePic(data.profileImg);
-          getUserPosts(data.id)
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.message === "allowed") {
-                setPosts(data.posts);
-                setPostsLoaded(true);
-              }
-            });
-        } else {
-          setPosts(null);
-          setUserData(null);
-          setPostsLoaded(false);
-          setUserExist(false);
-          navigate(`/${username}`);
+          setProfilePic(res.data.profileImg);
+          setPosts(res.data.posts);
+          setPostsLoaded(true);
         }
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        setPosts(null);
+        setUserData(null);
+        setPostsLoaded(false);
+        setUserExist(false);
+        navigate(`/${username}`);
         setIsLoading(false);
       });
   }, [
@@ -154,13 +143,9 @@ const User = () => {
 
   const deleteProfilePicHandler = () => {
     dispatch(confirmationModalOperations.closeModal());
-    deleteProfileImg({
-      userId: mainUser.id,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch(userOperations.updateProfilePic(data.image));
-      });
+    deleteProfileImg().then((res) => {
+      dispatch(userOperations.updateProfilePic(res.data.image));
+    });
   };
 
   const showConfirmationModal = () => {
@@ -258,7 +243,7 @@ const User = () => {
           {!isMainUser && mainUser.following.includes(userData.id) && (
             <SubscribeButton
               onDoubleClick={(e) => e.preventDefault()}
-              onClick={unfollowingHandler}
+              onClick={followingHandler}
             >
               Unfollow
             </SubscribeButton>

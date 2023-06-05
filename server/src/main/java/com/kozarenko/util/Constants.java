@@ -41,7 +41,7 @@ public class Constants {
   public static class Exception {
     public static final String NO_REQUEST_PARAMETER = "Missing request parameter";
     public static final String USER_NOT_FOUND = "User with such username was not found";
-    public static final String USERNAME_TAKEN = "User with such username already exists.";
+    public static final String USERNAME_TAKEN = "User with such username already exists";
     public static final String WRONG_PASSWORD = "An incorrect password was entered";
     public static final String COMMENT_NOT_FOUND = "Comment with such id was not found";
     public static final String POST_NOT_FOUND = "Post with such id was not found";

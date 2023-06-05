@@ -14,10 +14,6 @@ const Recommendation = ({ id, profileImg, username }) => {
     dispatch(userOperations.followUser(id));
   };
 
-  const unfollowingHandler = () => {
-    dispatch(userOperations.unfollowUser(id));
-  };
-
   return (
     <Wrapper>
       <UserWrapper
@@ -30,7 +26,7 @@ const Recommendation = ({ id, profileImg, username }) => {
         <SubscribeButton onClick={followingHandler}>Follow</SubscribeButton>
       )}
       {following.includes(id) && (
-        <SubscribeButton onClick={unfollowingHandler}>Unfollow</SubscribeButton>
+        <SubscribeButton onClick={followingHandler}>Unfollow</SubscribeButton>
       )}
     </Wrapper>
   );

@@ -3,6 +3,7 @@ package com.kozarenko.controller;
 import com.kozarenko.dto.post.PostInfoDto;
 import com.kozarenko.dto.user.*;
 import com.kozarenko.exception.custom.AccessDeniedException;
+import com.kozarenko.exception.custom.NoUserWithSuchIdException;
 import com.kozarenko.exception.custom.NoUserWithSuchUsernameException;
 import com.kozarenko.exception.custom.UsernameTakenException;
 import com.kozarenko.mapper.PostMapper;
@@ -13,6 +14,7 @@ import com.kozarenko.service.CloudinaryService;
 import com.kozarenko.service.FollowingService;
 import com.kozarenko.service.PostService;
 import com.kozarenko.service.UserService;
+import com.kozarenko.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,12 +43,13 @@ public class UserController {
   private final FollowingService followingService;
   private final UserMapper userMapper;
   private final PostMapper postMapper;
+  private final JwtTokenUtil jwtTokenUtil;
 
   @GetMapping("/{username}/profile")
   public ResponseEntity<UserProfileDto> getUserProfile(
           @PathVariable(USERNAME_QUERY) String usernameParam,
           @RequestAttribute(USERNAME_ATTRIBUTE) String username) throws NoUserWithSuchUsernameException {
-    User user = userService.findByUsername(username);
+    User user = userService.findByUsername(usernameParam);
     List<PostInfoDto> postDtos = postMapper.mapForListing(postService.getPostsByUsername(usernameParam), username);
 
     return ResponseEntity.ok(userMapper.mapForUserProfileDto(user, postDtos, username));
@@ -63,18 +66,22 @@ public class UserController {
     return ResponseEntity.ok(userMapper.mapForListing(suggestedUsers, username));
   }
 
-  @GetMapping("/{id}/followers")
+  @GetMapping("/{username}/followers")
   public ResponseEntity<List<UserAuthorDto>> getFollowers(
-          @PathVariable(ID_QUERY) String id,
+          @PathVariable(USERNAME_QUERY) String usernameParam,
           @RequestAttribute(USERNAME_ATTRIBUTE) String username) throws NoUserWithSuchUsernameException {
-    return ResponseEntity.ok(userMapper.mapForListing(followingService.getFollowers(id), username));
+    return ResponseEntity.ok(userMapper.mapForListing(
+            followingService.getFollowers(findByUsername(usernameParam)), username)
+    );
   }
 
-  @GetMapping("/{id}/following")
+  @GetMapping("/{username}/following")
   public ResponseEntity<List<UserAuthorDto>> getFollowing(
-          @PathVariable(ID_QUERY) String id,
+          @PathVariable(USERNAME_QUERY) String usernameParam,
           @RequestAttribute(USERNAME_ATTRIBUTE) String username) throws NoUserWithSuchUsernameException {
-    return ResponseEntity.ok(userMapper.mapForListing(followingService.getFollowings(id), username));
+    return ResponseEntity.ok(userMapper.mapForListing(
+            followingService.getFollowings(findByUsername(usernameParam)), username)
+    );
   }
 
   @GetMapping("/search")
@@ -86,17 +93,18 @@ public class UserController {
   }
 
   @PatchMapping("/profile/username")
-  public ResponseEntity<Void> changeUsername(
+  public ResponseEntity<String> changeUsername(
           @RequestBody UsernameDto usernameDto,
           @RequestAttribute(USERNAME_ATTRIBUTE) String username)
           throws UsernameTakenException, NoUserWithSuchUsernameException {
     if (userService.existsByUsername(usernameDto.getUsername())) {
       throw new UsernameTakenException();
     }
+    User user = findByUsername(username);
+    user.setUsername(usernameDto.getUsername());
+    userService.save(user);
 
-    findByUsername(username).setUsername(usernameDto.getUsername());
-
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return new ResponseEntity<>(jwtTokenUtil.generateToken(usernameDto.getUsername(), false), HttpStatus.OK);
   }
 
   @PostMapping("/profile/avatar")
@@ -108,8 +116,11 @@ public class UserController {
     deleteProfilePic(user);
     String imageUrl = cloudinaryService.uploadProfilePic(userDto.getImage(), user.getId());
     user.setProfileImgUrl(imageUrl);
+    userService.save(user);
+    UserImageDto userDtoResponse = new UserImageDto();
+    userDtoResponse.setImage(imageUrl);
 
-    return ResponseEntity.ok(new UserImageDto(imageUrl));
+    return ResponseEntity.ok(userDtoResponse);
   }
 
   @DeleteMapping("/profile/avatar")
@@ -119,27 +130,32 @@ public class UserController {
     User user = findByUsername(username);
     if (deleteProfilePic(user)) {
       user.setProfileImgUrl(DEFAULT_IMG);
+      userService.save(user);
     }
+    UserImageDto userDtoResponse = new UserImageDto();
+    userDtoResponse.setImage(user.getProfileImgUrl());
 
-    return ResponseEntity.ok(new UserImageDto(user.getProfileImgUrl()));
+    return ResponseEntity.ok(userDtoResponse);
   }
 
-  @PostMapping("/{username}")
+  @PostMapping("/{id}")
   public ResponseEntity<Void> followUser(
-          @PathVariable(USERNAME_QUERY) String username,
-          @RequestAttribute(USERNAME_ATTRIBUTE) String currentUserUsername) throws NoUserWithSuchUsernameException {
+          @PathVariable(ID_QUERY) String id,
+          @RequestAttribute(USERNAME_ATTRIBUTE) String currentUserUsername)
+          throws NoUserWithSuchUsernameException, NoUserWithSuchIdException {
     return new ResponseEntity<>(
-            followingService.followUnfollow(findByUsername(username), findByUsername(currentUserUsername))
-            ? HttpStatus.CREATED
-            : HttpStatus.OK
+            followingService.followUnfollow(userService.findById(id), findByUsername(currentUserUsername))
+                    ? HttpStatus.CREATED
+                    : HttpStatus.OK
     );
   }
 
-  @DeleteMapping("/{username}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteUser(
-          @PathVariable(USERNAME_QUERY) String username,
-          @RequestAttribute(USERNAME_ATTRIBUTE) String currentUserUsername) throws NoUserWithSuchUsernameException {
-    followingService.deleteFollower(findByUsername(username), findByUsername(currentUserUsername));
+          @PathVariable(ID_QUERY) String id,
+          @RequestAttribute(USERNAME_ATTRIBUTE) String currentUserUsername)
+          throws NoUserWithSuchUsernameException, NoUserWithSuchIdException {
+    followingService.deleteFollower(userService.findById(id), findByUsername(currentUserUsername));
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 

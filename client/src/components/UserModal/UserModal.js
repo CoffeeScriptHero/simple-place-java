@@ -19,7 +19,7 @@ const UserModal = ({ isMainUser, type, username, id, mainId, img }) => {
   };
 
   const unfollowingHandler = () => {
-    dispatch(userOperations.unfollowUser(id));
+    dispatch(userOperations.followUser(id));
   };
 
   const deleteHandler = () => {

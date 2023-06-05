@@ -10,7 +10,7 @@ import {
 } from "./Comment-styles";
 import Icon from "../Icon/Icon";
 import { useState } from "react";
-import { removeComment, updateLikes } from "../../services/PostsService";
+import { removeComment, updateCommentLikes } from "../../services/PostsService";
 import { useDispatch } from "react-redux";
 import { postModalOperations } from "../../store/postModal";
 
@@ -20,9 +20,8 @@ const Comment = ({
   username,
   setComments,
   profileImg,
-  comments,
+  liked,
   commentUserId,
-  postId,
   userId,
   text,
   likes = [],
@@ -30,9 +29,7 @@ const Comment = ({
   isDescription = false,
 }) => {
   const dispatch = useDispatch();
-  const [isFilled, setIsFilled] = useState(
-    likes.includes(mainUserId) ? true : false
-  );
+  const [isFilled, setIsFilled] = useState(liked);
   const [likesArr, setLikesArr] = useState(likes);
 
   const likeHandler = () => {
@@ -44,16 +41,14 @@ const Comment = ({
       likes.splice(userIndex, userIndex + 1);
     }
     setLikesArr(likes);
-    updateLikes(commentId, likes, "comment");
+    updateCommentLikes(commentId);
   };
 
   const removeCommentHandler = () => {
-    removeComment(postId, commentId, comments)
-      .then((res) => res.json())
-      .then((data) => {
-        setComments(data.comments);
-        dispatch(postModalOperations.updateComments(data.comments));
-      });
+    removeComment(commentId).then((res) => {
+      setComments(res.data);
+      dispatch(postModalOperations.updateComments(res.data));
+    });
   };
 
   return (

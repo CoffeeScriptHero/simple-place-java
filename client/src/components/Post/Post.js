@@ -13,7 +13,6 @@ import {
 import Icon from "../Icon/Icon";
 import Comments from "../Comments/Comments";
 import CommentForm from "../CommentForm/CommentForm";
-import { receiveData } from "../../services/UserService";
 import Username from "../Username/Username";
 import UserWrapper from "../UserWrapper/UserWrapper";
 import { useNavigate } from "react-router-dom";
@@ -23,12 +22,15 @@ import { confirmationModalOperations } from "../../store/confirmationModal";
 import { deletePost, likeHandler } from "../../services/PostsService";
 import LikesSection from "../LikesSection/LikesSection";
 import { modalHandler } from "../../services/UsersModalService";
+import { userSelectors } from "../../store/user";
 
 const Post = ({
   img,
   userId,
   postId,
+  username,
   mainUserId,
+  userImg,
   likes,
   liked,
   desc,
@@ -37,12 +39,9 @@ const Post = ({
   setPosts,
 }) => {
   const [showDesc, setShowDesc] = useState(true);
-  const [userData, setUserData] = useState({
-    username: null,
-    profileImg: null,
-  });
+  const user = useSelector(userSelectors.getUser());
   const [likesArr, setLikesArr] = useState(likes);
-  const [isFilled, setIsFilled] = useState(liked);
+  const [isFilled, setIsFilled] = useState(likes.includes(user.id));
   const [comments, setComments] = useState(postComments);
   const postInfo = useSelector(postModalSelectors.getModalInfo());
   const navigate = useNavigate();
@@ -54,25 +53,18 @@ const Post = ({
       setComments(postInfo.comments);
     }
     setIsFilled(liked);
-    receiveData({ id: userId }, "/api/main_user/get-user-data")
-      .then((res) => res.json())
-      .then((data) => {
-        setUserData({ username: data.username, profileImg: data.profileImg });
-      });
   }, [postInfo.comments, liked]);
 
   const deletePostHandler = () => {
-    deletePost(postId)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.message === "success") {
-          dispatch(confirmationModalOperations.closeModal());
-          setPosts((prevState) => {
-            return prevState.filter((p) => p.id !== postId);
-          });
-          return;
-        }
-      });
+    deletePost(postId).then((res) => {
+      if (res.status === 204) {
+        dispatch(confirmationModalOperations.closeModal());
+        setPosts((prevState) => {
+          return prevState.filter((p) => p.id !== postId);
+        });
+        return;
+      }
+    });
   };
 
   const showConfirmationModal = () => {
@@ -90,9 +82,9 @@ const Post = ({
   const postModalHandler = () => {
     dispatch(
       postModalOperations.setPostInfo({
-        username: userData.username,
-        profileImg: userData.profileImg,
-        image: img,
+        username: username,
+        profileImg: userImg,
+        imageUrl: img,
         likes: likesArr,
         userId: userId,
         postId: postId,
@@ -108,15 +100,12 @@ const Post = ({
     setShowDesc(!showDesc);
   };
 
-  if (userData.username === null) return "";
+  if (user.user === null) return "";
 
   return (
     <Article>
       <Header>
-        <UserWrapper
-          profileImg={userData.profileImg}
-          username={userData.username}
-        />
+        <UserWrapper profileImg={userImg} username={username} />
         {isMainUser && (
           <DeleteButton pdRight="20px" onClick={showConfirmationModal}>
             Delete
@@ -154,7 +143,7 @@ const Post = ({
         {desc.length > 0 && (
           <Description>
             <Username
-              username={userData.username}
+              username={username}
               margin={"0 10px 0 0 "}
               weight={"700"}
               decoration={"underline"}

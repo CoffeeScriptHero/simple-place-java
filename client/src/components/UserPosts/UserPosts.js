@@ -14,7 +14,7 @@ const UserPosts = ({ userId, posts, postsLoaded }) => {
 
   const postsList = posts.map((p) => (
     <UserPost
-      img={p.image}
+      img={p.imageUrl}
       likes={p.likes}
       comments={p.comments}
       description={p.description}

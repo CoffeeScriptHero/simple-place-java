@@ -14,9 +14,18 @@ import java.util.List;
 public class FollowingService {
 
   private final FollowingRepository followingRepository;
+  private final UserService userService;
+
 
   public List<User> getSuggestedUsers(User user) {
     return followingRepository.findNonFollowedUsers(user.getId());
+  }
+  public List<User> getFollowers(User user) {
+    return followingRepository.findFollowersByFollowedId(user.getId());
+  }
+
+  public List<User> getFollowings(User user) {
+    return followingRepository.findUserFollowingsById(user.getId());
   }
 
   public List<User> getFollowers(String id) {

@@ -1,5 +1,6 @@
 package com.kozarenko.service;
 
+import com.kozarenko.exception.custom.NoUserWithSuchIdException;
 import com.kozarenko.exception.custom.NoUserWithSuchUsernameException;
 import com.kozarenko.exception.custom.UsernameTakenException;
 import com.kozarenko.model.base.User;
@@ -34,6 +35,10 @@ public class UserService {
 
   public User findByUsername(String username) throws NoUserWithSuchUsernameException {
     return userRepository.findByUsername(username).orElseThrow(NoUserWithSuchUsernameException::new);
+  }
+
+  public User findById(String id) throws NoUserWithSuchIdException {
+    return userRepository.findById(id).orElseThrow(NoUserWithSuchIdException::new);
   }
 
   public List<User> findByRegex(String regex) {

@@ -7,6 +7,13 @@ export const RecommendedWrapper = styled.div`
   margin-top: 50px;
 `;
 
+export const InfoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 80%;
+`;
+
 export const Inscription = styled.span`
   font-family: Quicksand;
   display: block;

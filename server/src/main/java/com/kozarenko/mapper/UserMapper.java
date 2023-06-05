@@ -26,8 +26,13 @@ public class UserMapper {
     this.modelMapper = modelMapper;
     this.userService = userService;
     this.followingService = followingService;
-    TypeMap<User, UserProfileDto> propertyMapper = modelMapper.createTypeMap(User.class, UserProfileDto.class);
-    propertyMapper.addMappings(mapper -> mapper.skip(UserProfileDto::setPosts));
+    TypeMap<User, UserProfileDto> propertyProfileMapper = modelMapper.createTypeMap(User.class, UserProfileDto.class);
+    propertyProfileMapper.addMappings(mapper -> mapper.skip(UserProfileDto::setFollowers));
+    propertyProfileMapper.addMappings(mapper -> mapper.skip(UserProfileDto::setFollowing));
+    propertyProfileMapper.addMappings(mapper -> mapper.skip(UserProfileDto::setPosts));
+    TypeMap<User, UserAccountDto> propertyAccountMapper = modelMapper.createTypeMap(User.class, UserAccountDto.class);
+    propertyAccountMapper.addMappings(mapper -> mapper.skip(UserAccountDto::setFollowing));
+    propertyAccountMapper.addMappings(mapper -> mapper.skip(UserAccountDto::setFollowers));
   }
 
   public User mapToUser(UserCredentialsDto userDto) {
@@ -83,8 +88,8 @@ public class UserMapper {
   }
 
   private void setAccountDetails(UserProfileDto userDto, User user) {
-    userDto.setFollowers(extractUserIds(followingService.getFollowers(user.getId())));
-    userDto.setFollowing(extractUserIds(followingService.getFollowings(user.getId())));
+    userDto.setFollowers(extractUserIds(followingService.getFollowers(userDto.getId())));
+    userDto.setFollowing(extractUserIds(followingService.getFollowings(userDto.getId())));
   }
 
   private void setAccountDetails(UserAccountDto userDto, User user) {

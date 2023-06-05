@@ -18,7 +18,6 @@ public class PostLikeService {
 
   private final PostLikeRepository postLikeRepository;
   private final PostService postService;
-  private final UserService userService;
 
   public boolean saveLike(String userId, String postId) {
     if (!existsByIds(userId, postId)) {

@@ -1,39 +1,34 @@
+import axiosIns from "../../axiosInstance";
 import actions from "./actions";
 
 const getFollowers = (username) => async (dispatch, getState) => {
-  fetch("/api/users/get-followers", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      dispatch(actions.setUsers(data.followers));
-    });
+  await axiosIns
+    .get(`/api/users/${username}/followers`)
+    .then((res) => {
+      dispatch(actions.setUsers(res.data));
+    })
+    .catch((e) => console.log(e));
 };
 
 const getFollowing = (username) => async (dispatch, getState) => {
-  fetch("/api/users/get-following", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      dispatch(actions.setUsers(data.following));
-    });
+  await axiosIns
+    .get(`/api/users/${username}/following`)
+    .then((res) => {
+      dispatch(actions.setUsers(res.data));
+    })
+    .catch((e) => console.log(e));
 };
 
-const getLiked = (id, type) => async (dispatch, getState) => {
-  fetch("/api/post/get-liked", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, type }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      dispatch(actions.setUsers(data.liked));
-    });
+const getLiked = (id) => async (dispatch, getState) => {
+  const response = await axiosIns.get(`/api/posts/${id}/likes`);
+
+  dispatch(actions.setUsers(response.data));
+};
+
+const getCommentLikes = (id) => async (dispatch, getState) => {
+  const response = await axiosIns.get(`/api/posts/${id}/comments/likes`);
+
+  dispatch(actions.setUsers(response.data));
 };
 
 const deleteUser = (username) => (dispatch, getState) => {
@@ -51,6 +46,7 @@ const setNewModalType = (type) => (dispatch, getState) => {
 const operationsObj = {
   setNewModalType,
   getFollowers,
+  getCommentLikes,
   getFollowing,
   getLiked,
   deleteUser,

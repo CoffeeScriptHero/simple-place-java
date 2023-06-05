@@ -55,12 +55,10 @@ const CommentForm = ({ postId, setComments, isModal, ...rest }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    createComment(postId, userId, textArea.current.value)
-      .then((res) => res.json())
-      .then((data) => {
-        setComments(data.comments);
-        dispatch(postModalOperations.updateComments(data.comments));
-      });
+    createComment(postId, textArea.current.value).then((res) => {
+      setComments(res.data);
+      dispatch(postModalOperations.updateComments(res.data));
+    });
     textArea.current.value = "";
     setIsActive(false);
   };

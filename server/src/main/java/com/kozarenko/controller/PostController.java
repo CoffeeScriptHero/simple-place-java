@@ -62,7 +62,7 @@ public class PostController {
     return new ResponseEntity<>(postMapper.mapToPostInfoDto(postService.save(post), username), HttpStatus.CREATED);
   }
 
-  @GetMapping("")
+  @GetMapping()
   public ResponseEntity<List<PostInfoDto>>
   getPosts(@RequestParam(PAGE_NUMBER_QUERY) Optional<Integer> pageParam,
            @RequestParam(RESULTS_PER_PAGE_QUERY) Optional<Integer> postsPerPageParam,

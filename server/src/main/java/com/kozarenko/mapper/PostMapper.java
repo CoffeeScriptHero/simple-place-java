@@ -41,6 +41,9 @@ public class PostMapper {
     this.postLikeService = postLikeService;
     TypeMap<PostCreationDto, Post> propertyMapper = modelMapper.createTypeMap(PostCreationDto.class, Post.class);
     propertyMapper.addMappings(mapper -> mapper.skip(Post::setImageUrl));
+    TypeMap<Post, PostInfoDto> propertyMapper2 = modelMapper.createTypeMap(Post.class, PostInfoDto.class);
+    propertyMapper2.addMappings(mapper -> mapper.skip(PostInfoDto::setLikes));
+    propertyMapper2.addMappings(mapper -> mapper.skip(PostInfoDto::setComments));
   }
 
   public Post mapToPost(PostCreationDto postDto) {
@@ -73,7 +76,7 @@ public class PostMapper {
     User author = userService.findByUsername(postDto.getAuthor().getUsername());
     postDto.getAuthor().setFollowed(followingService.isUserFollowing(currentUser, author));
     postDto.setLiked(postLikeService.existsByIds(currentUser.getId(), id));
-    postDto.setLikesNumber(postLikeService.countPostLikes(id));
+    postDto.setLikes(postLikeService.getUsersListOfLikes(id).stream().map(User::getId).toList());
     postDto.setComments(commentMapper.mapForListing(commentService.getComments(id), currentUser));
   }
 }

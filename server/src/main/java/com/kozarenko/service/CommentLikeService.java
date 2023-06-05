@@ -1,6 +1,7 @@
 package com.kozarenko.service;
 
 import com.kozarenko.exception.custom.NoCommentWithSuchIdException;
+import com.kozarenko.exception.custom.NoPostWithSuchIdException;
 import com.kozarenko.model.additional.CommentLike;
 import com.kozarenko.model.additional.keys.CommentLikePk;
 import com.kozarenko.model.base.Comment;
@@ -36,12 +37,13 @@ public class CommentLikeService {
     commentLikeRepository.deleteByLikedByAndLikedComment(new User(userId), new Comment(commentId));
   }
 
-    public List<User> getUsersListOfLikes(String id) throws NoCommentWithSuchIdException {
-      if (!commentService.existsById(id)) {
-        throw new NoCommentWithSuchIdException();
-      }
-      return commentLikeRepository.findUsersByLikedComment(id);
+  public List<User> getUsersListOfLikes(String id) throws NoCommentWithSuchIdException {
+    if (!commentService.existsById(id)) {
+      throw new NoCommentWithSuchIdException();
     }
+    return commentLikeRepository.findUsersByLikedComment(id);
+  }
+
 
   public int countCommentLikes(String id) {
     return commentLikeRepository.countAllByLikedComment(new Comment(id));

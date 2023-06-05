@@ -1,87 +1,53 @@
-import { getCookie } from "./CookiesService";
-import { userOperations } from "../store/user";
 import axiosIns from "../axiosInstance";
-
 
 export const authenticate = async (data, request) => {
   const response = await axiosIns.post(`api/authentication/${request}`, data);
 
   return response;
-}
+};
 
 export const logInByToken = async () => {
-  try {
-    const response = await axiosIns.get("api/authentication/jwt")
+  const response = await axiosIns.get("api/authentication/jwt");
 
-    return response;
-  } catch (e) {
-    return e;
-  }
-}
-
-export const receiveData = async (data, request) => {
-  const response = await fetch(request, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
   return response;
 };
 
-export const setUserData = async (dispatch) => {
-  receiveData({ id: getCookie("id") }, "/api/main_user/get-user-data")
-    .then((res) => res.json())
-    .then((res) => {
-      dispatch(
-        userOperations.setNewUser({
-          user: getCookie("username"),
-          id: getCookie("id"),
-          profileImg: res.profileImg,
-          following: res.following,
-          followers: res.followers,
-        })
-      );
-    });
+export const getRecommendedUsers = async () => {
+  const response = await axiosIns.get("/api/users/recommended");
+
+  return response;
 };
 
-export const checkUserLogged = async () => {
-  const id = getCookie("id");
-  let isLogged = false;
+export const searchUsers = async (input = "") => {
+  const response = await axiosIns.get("/api/users/search", {
+    params: {
+      s: input,
+    },
+  });
 
-  if (id) {
-    await receiveData({ id }, "/api/main_user/check-main-user")
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.message === "allowed") isLogged = true;
-      });
-  }
+  return response;
+};
 
-  return isLogged;
+export const getUserpage = async (username) => {
+  const response = await axiosIns.get(`/api/users/${username}/profile`);
+
+  return response;
 };
 
 export const changeUsername = async (data) => {
-  const response = await fetch("/api/main_user/change-username", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+  const response = await axiosIns.patch("/api/users/profile/username", data);
+
   return response;
 };
 
 export const changeProfileImg = async (data) => {
-  const response = await fetch("/api/main_user/change-profile-img", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+  const response = await axiosIns.post("/api/users/profile/avatar", data);
+
   return response;
 };
 
-export const deleteProfileImg = async (data) => {
-  const response = await fetch("/api/main_user/delete-profile-img", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+export const deleteProfileImg = async () => {
+  const response = await axiosIns.delete("/api/users/profile/avatar");
+
   return response;
 };

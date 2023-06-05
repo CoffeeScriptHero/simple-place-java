@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AddPostModal from "../AddPostModal/AddPostModal";
 import SearchBar from "../SearchBar/SearchBar";
 import { useNavigate } from "react-router-dom";
-import { deleteCookie } from "../../services/CookiesService";
+import { TOKEN } from "../../util/constants";
 
 const Header = () => {
   const username = useSelector(userSelectors.getUser()).user;
@@ -20,10 +20,9 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
 
   const logOutAccount = () => {
-    deleteCookie("id");
-    deleteCookie("username");
     dispatch(confirmationModalOperations.closeModal());
     dispatch(userOperations.setNewUser({ user: null, id: null }));
+    localStorage.removeItem(TOKEN);
     navigate("/");
   };
 

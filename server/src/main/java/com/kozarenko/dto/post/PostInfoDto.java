@@ -13,6 +13,6 @@ public class PostInfoDto {
   private String imageUrl;
   private UserAuthorDto author;
   private boolean isLiked;
-  private int likesNumber;
+  private List<String> likes;
   private List<CommentInfoDto> comments;
 }

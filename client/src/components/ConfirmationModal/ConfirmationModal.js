@@ -35,13 +35,11 @@ const ConfirmationModal = () => {
 
   const onChange = (imageList, addUpdateIndex) => {
     dispatch(confirmationModalOperations.closeModal());
-    changeProfileImg({ userId: id, imageFile: imageList[0] })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === 200) {
-          dispatch(userOperations.updateProfilePic(data.image));
-        }
-      });
+    changeProfileImg({ image: imageList[0].data_url }).then((res) => {
+      if (res.status === 200) {
+        dispatch(userOperations.updateProfilePic(res.data.image));
+      }
+    });
   };
 
   if (!modalInfo.showModal) return null;

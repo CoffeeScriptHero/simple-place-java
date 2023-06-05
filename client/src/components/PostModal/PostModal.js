@@ -15,7 +15,6 @@ import { SubscribeButton } from "../../App-styles";
 import UserWrapper from "../UserWrapper/UserWrapper";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { deletePost, getPost } from "../../services/PostsService";
-import { receiveData } from "../../services/UserService";
 import { useSelector, useDispatch } from "react-redux";
 import { postModalOperations, postModalSelectors } from "../../store/postModal";
 import { confirmationModalOperations } from "../../store/confirmationModal";
@@ -25,7 +24,6 @@ import Comment from "../Comment/Comment";
 import UsersModal from "../UsersModal/UsersModal";
 import CommentForm from "../CommentForm/CommentForm";
 import Icon from "../Icon/Icon";
-import { getCookie } from "../../services/CookiesService";
 import LikesSection from "../LikesSection/LikesSection";
 import { modalHandler } from "../../services/UsersModalService";
 import { likeHandler } from "../../services/PostsService";
@@ -41,9 +39,8 @@ const PostModal = () => {
     postData.comments ? postData.comments : []
   );
   const [showModal, setShowModal] = useState(false);
-  const mainUserId = getCookie("id");
   const [isFilled, setIsFilled] = useState(
-    postData.likes ? postData.likes.includes(mainUserId) : false
+    postData.likes ? postData.liked : false
   );
   const [likesArr, setLikesArr] = useState(
     postData.likes ? postData.likes : []
@@ -73,20 +70,14 @@ const PostModal = () => {
     dispatch(userOperations.followUser(postData.userId));
   };
 
-  const unfollowingHandler = () => {
-    dispatch(userOperations.unfollowUser(postData.userId));
-  };
-
   const deletePostHandler = () => {
-    deletePost(postId)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.message === "success") {
-          dispatch(userOperations.saveDeletedPost(postId));
-          dispatch(confirmationModalOperations.closeModal());
-          closeModal();
-        }
-      });
+    deletePost(postId).then((res) => {
+      if (res.status === "204") {
+        dispatch(userOperations.saveDeletedPost(postId));
+        dispatch(confirmationModalOperations.closeModal());
+        closeModal();
+      }
+    });
   };
 
   const showConfirmationModal = () => {
@@ -103,37 +94,29 @@ const PostModal = () => {
 
   useEffect(() => {
     if (!postData.username) {
-      getPost(postId)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.post) {
-            setPostData((prevState) => {
-              return { ...prevState, ...data.post };
-            });
-            setIsFilled(data.post.likes.includes(mainUserId) ? true : false);
-            setComments(data.post.comments);
-            setLikesArr(data.post.likes);
-            receiveData(
-              { id: data.post.userId },
-              "/api/main_user/get-user-data"
-            )
-              .then((res) => res.json())
+      getPost(postId).then((res) => {
+        if (res.data) {
+          setPostData((prevState) => {
+            return { ...prevState, ...res.data };
+          });
+          setIsFilled(res.data.liked);
+          setComments(res.data.comments);
+          setLikesArr(res.data.likes);
 
-              .then((data) => {
-                setPostData((prevState) => {
-                  return {
-                    ...prevState,
-                    username: data.username,
-                    profileImg: data.profileImg,
-                  };
-                });
-              });
-          } else {
-            navigate("/");
-          }
-        });
+          setPostData((prevState) => {
+            return {
+              ...prevState,
+              username: res.data.author.username,
+              profileImg: res.data.author.profileImgUrl,
+              userId: res.data.author.id,
+            };
+          });
+        } else {
+          navigate("/");
+        }
+      });
     } else {
-      setIsFilled(postData.likes.includes(mainUserId) ? true : false);
+      setIsFilled(postData.likes.includes(mainUser.id) ? true : false);
       setLikesArr(postData.likes);
     }
   }, [mainUser.profileImg]);
@@ -147,7 +130,7 @@ const PostModal = () => {
       <PostModalWrapper onClick={closeModalOnArea}>
         <ModalContent ref={modalRef}>
           <ImageWrapper>
-            <Image src={postData.image}></Image>
+            <Image src={postData.imageUrl}></Image>
           </ImageWrapper>
           <PostContent>
             <PostHeader>
@@ -162,7 +145,7 @@ const PostModal = () => {
                 </SubscribeButton>
               )}
               {!isMainUser && following.includes(postData.userId) && (
-                <SubscribeButton onClick={unfollowingHandler}>
+                <SubscribeButton onClick={followingHandler}>
                   Unfollow
                 </SubscribeButton>
               )}
@@ -175,7 +158,7 @@ const PostModal = () => {
             <PostBody>
               {postData.description && (
                 <Comment
-                  mainUserId={mainUserId}
+                  mainUserId={mainUser.id}
                   username={postData.username}
                   userId={postData.userId}
                   commentUserId={postData.userId}
@@ -207,7 +190,7 @@ const PostModal = () => {
                   setLikesArr,
                   likesArr,
                   postId,
-                  mainUserId
+                  mainUser.id
                 )}
               />
               <LikesSection

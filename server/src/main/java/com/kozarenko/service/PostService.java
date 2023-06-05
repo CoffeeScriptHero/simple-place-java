@@ -25,7 +25,7 @@ public class PostService {
   }
 
   public List<Post> getPosts(int page, int postsPerPage) {
-    return postRepository.findAll(PageRequest.of(page, postsPerPage, Sort.by("createdDate"))).toList();
+    return postRepository.findAll(PageRequest.of(page, postsPerPage, Sort.by( Sort.Direction.DESC,"createdDate"))).toList();
   }
 
   public List<Post> getPostsByUsername(String username) {

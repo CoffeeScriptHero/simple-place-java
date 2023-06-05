@@ -3,17 +3,13 @@ import { Section, EndMessage } from "./Posts-styles";
 import Post from "../Post/Post";
 import { getPosts } from "../../services/PostsService";
 import UsersModal from "../UsersModal/UsersModal";
-import { getCookie } from "../../services/CookiesService";
 import { userSelectors } from "../../store/user";
 import { useSelector } from "react-redux";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "../Loader/Loader";
-import { postModalSelectors } from "../../store/postModal";
 
 const Posts = () => {
-  const mainUserId = getCookie("id");
   const user = useSelector(userSelectors.getUser());
-  const postModal = useSelector(postModalSelectors.getModalInfo());
   const [posts, setPosts] = useState([]);
   const [from, setFrom] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -21,24 +17,24 @@ const Posts = () => {
 
   const fetchPosts = () => {
     if (from === 0) return;
-    getPosts(from, 3)
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts((prevState) => [...prevState, ...data.posts]);
-        setFrom((prevState) => prevState + 3);
-        setHasMore(data.hasMore);
-      });
+    getPosts(from, 3).then((res) => {
+      setPosts((prevState) => [...prevState, ...res.data]);
+      setFrom((prevState) => prevState + 1);
+      setHasMore(res.data.length < 3 ? false : true);
+    });
   };
 
   const postsList = posts.map((p) => (
     <Post
       key={p.id}
       postId={p.id}
-      img={p.image}
-      userId={p.userId}
-      mainUserId={mainUserId}
+      img={p.imageUrl}
+      userImg={p.author.profileImgUrl}
+      userId={p.author.id}
+      username={p.author.username}
+      mainUserId={user.id}
       likes={p.likes}
-      liked={p.likes.includes(mainUserId)}
+      liked={p.likes.includes(user.id)}
       desc={p.description}
       postComments={p.comments}
       setShowModal={setShowModal}
@@ -49,26 +45,17 @@ const Posts = () => {
   useEffect(() => {
     if (!user.user) return;
     if (posts.length) {
-      getPosts(0, 3)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          setHasMore(true);
-          setPosts([...data.posts]);
-          // если 3 поста в ленте, потом добавить пост, спуститься вниз и ждать, то последний (третий пост пропадет) при загрузке нового.
-          setFrom(3);
-        });
+      getPosts(0, 3).then((res) => {
+        setHasMore(res.data.length > 0 ? true : false);
+        setPosts([...res.data]);
+        setFrom(1);
+      });
     } else {
-      getPosts(from, 3)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          setPosts((prevState) => [...prevState, ...data.posts]);
-          setFrom((prevState) => prevState + 3);
-          setHasMore(true);
-        });
+      getPosts(from, 3).then((res) => {
+        setPosts((prevState) => [...prevState, ...res.data]);
+        setFrom((prevState) => prevState + 1);
+        setHasMore(res.data.length > 0 ? true : false);
+      });
     }
   }, [user]);
 

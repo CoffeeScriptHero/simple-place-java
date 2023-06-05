@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { receiveData } from "../../services/UserService";
+import { searchUsers } from "../../services/UserService";
 import { userSelectors } from "../../store/user";
 import {
   Wrapper,
@@ -21,19 +21,17 @@ const SearchBarUsers = ({ usernameChunk, usersLoaded, setUsersLoaded }) => {
         isLink={false}
         padding="8px 16px"
         activeBackground="rgba(var(--bb2,239,239,239),1)"
-        profileImg={u.profileImg}
+        profileImg={u.profileImgUrl}
         username={u.username}
       />
     </UserWrapperLink>
   ));
 
   useEffect(() => {
-    receiveData({ usernameChunk }, "/api/users/get-matched-users")
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data.users);
-        setUsersLoaded(true);
-      });
+    searchUsers(usernameChunk).then((res) => {
+      setUsers(res.data);
+      setUsersLoaded(true);
+    });
   }, [usernameChunk, mainUser]);
 
   return (

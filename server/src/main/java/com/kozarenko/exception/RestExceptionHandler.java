@@ -38,6 +38,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler({
           NoUserWithSuchUsernameException.class,
+          NoUserWithSuchIdException.class,
           NoPostWithSuchIdException.class,
           NoCommentWithSuchIdException.class
   })

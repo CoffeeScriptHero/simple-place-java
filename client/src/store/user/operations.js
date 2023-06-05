@@ -1,3 +1,4 @@
+import axiosIns from "../../axiosInstance";
 import actions from "./actions";
 
 const setNewUser = (userInfo) => (dispatch, getState) => {
@@ -5,44 +6,29 @@ const setNewUser = (userInfo) => (dispatch, getState) => {
 };
 
 const followUser = (id) => async (dispatch, getState) => {
-  fetch("/api/main_user/follow-user", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: id, mainId: getState().user.id }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.message === "allowed") {
-        getState().user.following.push(id);
-        dispatch(actions.updateModal());
-      }
-    });
-};
+  const response = await axiosIns.post(`/api/users/${id}`);
 
-const unfollowUser = (id) => async (dispatch, getState) => {
-  fetch("/api/main_user/unfollow-user", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: id, mainId: getState().user.id }),
-  }).then(() => {
+  if (response.status === 201) {
+    getState().user.following.push(id);
+  }
+  if (response.status === 200) {
     getState().user.following = getState().user.following.filter(
       (i) => i !== id
     );
-    dispatch(actions.updateModal());
-  });
+  }
+
+  dispatch(actions.updateModal());
+
+  return response;
 };
 
 const deleteUser = (id) => async (dispatch, getState) => {
-  fetch("/api/main_user/delete-user", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: id, mainId: getState().user.id }),
-  }).then(() => {
-    getState().user.followers = getState().user.followers.filter(
-      (i) => i !== id
-    );
-    dispatch(actions.updateModal());
-  });
+  const response = await axiosIns.delete(`/api/users/${id}`);
+
+  getState().user.followers = getState().user.followers.filter((i) => i !== id);
+  dispatch(actions.updateModal());
+
+  return response;
 };
 
 const saveAddedPost = (post) => (dispatch, getState) => {
@@ -64,7 +50,6 @@ const updateProfilePic = (profilePic) => (dispatch, getState) => {
 const operationsObj = {
   setNewUser,
   followUser,
-  unfollowUser,
   deleteUser,
   saveAddedPost,
   saveDeletedPost,

@@ -1,76 +1,57 @@
-export const getAllPosts = async () => {
-  const response = await fetch("/api/post/get-all-posts");
-  return response;
-};
+import axiosIns from "../axiosInstance";
 
 export const getPosts = async (from, step) => {
-  const response = await fetch("/api/post/get-posts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ from, step }),
+  const response = axiosIns.get("/api/posts", {
+    params: {
+      p: from,
+      n: step,
+    },
   });
-  return response;
-};
 
-export const getUserPosts = async (id) => {
-  const response = await fetch("/api/post/get-user-posts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id }),
-  });
   return response;
 };
 
 export const getPost = async (id) => {
-  const response = await fetch("/api/post/get-post", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: id }),
-  });
+  const response = axiosIns.get(`/api/posts/${id}`);
+
   return response;
 };
 
-export const createComment = async (postId, userId, text) => {
-  const response = await fetch("/api/post/create-comment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ postId, userId, text }),
+export const createComment = async (postId, text) => {
+  const response = await axiosIns.post(`/api/posts/${postId}/comments`, {
+    text,
   });
+
   return response;
 };
 
-export const updateLikes = async (id, likes, type) => {
-  await fetch("/api/post/update-likes", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, likes, type }),
-  });
+export const updatePostLikes = async (id) => {
+  const response = await axiosIns.post(`/api/posts/${id}/likes`);
+
+  return response;
 };
 
-export const removeComment = async (postId, commentId, comments) => {
-  const response = await fetch("/api/post/remove-comment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ postId, commentId, comments }),
-  });
+export const updateCommentLikes = async (id) => {
+  const response = await axiosIns.post(`/api/posts/${id}/comments/likes`);
+
+  return response;
+};
+
+export const removeComment = async (id) => {
+  const response = await axiosIns.delete(`/api/posts/comments/${id}`);
+
   return response;
 };
 
 export const createPost = async (data) => {
-  const response = await fetch("/api/post/add-post", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+  const response = await axiosIns.post(`/api/posts`, data);
+
   return response;
 };
 
 export const deletePost = async (postId) => {
-  const response = await fetch("/api/post/delete-post", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ postId }),
-  });
+  const response = await axiosIns.delete(`/api/posts/${postId}`);
+
   return response;
 };
 
@@ -90,5 +71,5 @@ export const likeHandler = (
     likes.splice(userIndex, userIndex + 1);
   }
   setLikesArr(likes);
-  updateLikes(postId, likes, "post");
+  updatePostLikes(postId);
 };

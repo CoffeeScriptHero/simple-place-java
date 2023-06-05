@@ -73,13 +73,10 @@ const AddPostModal = ({ setShowModal }) => {
     if (stage === 3) {
       createPost({
         description: textArea.current.value,
-        userId: user.id,
-        imageFile: images[0],
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          dispatch(userOperations.saveAddedPost(data.id));
-        });
+        base64Image: images[0].data_url,
+      }).then((res) => {
+        dispatch(userOperations.saveAddedPost(res.data.id));
+      });
       setShowModal(false);
     } else {
       setStage((prevState) => prevState + 1);

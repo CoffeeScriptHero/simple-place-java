@@ -3,9 +3,9 @@ import {
   RecommendedWrapper,
   Inscription,
   UsersWrapper,
+  InfoWrapper,
 } from "./Recommended-styles";
-import { receiveData } from "../../services/UserService.js";
-import { getCookie } from "../../services/CookiesService";
+import { getRecommendedUsers } from "../../services/UserService.js";
 import Recommendation from "../Recommendation/Recommendation";
 
 const Recommended = () => {
@@ -25,18 +25,16 @@ const Recommended = () => {
   ];
 
   useEffect(() => {
-    receiveData({ id: getCookie("id") }, "/api/users/get-recommended-users")
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data.users);
-      });
+    getRecommendedUsers().then((res) => {
+      setUsers(res.data);
+    });
   }, []);
 
   const usersList = users.map((u) => (
     <Recommendation
       key={u.id}
       id={u.id}
-      profileImg={u.profileImg}
+      profileImg={u.profileImgUrl}
       username={u.username}
     />
   ));
@@ -48,6 +46,13 @@ const Recommended = () => {
         {emojisArray[Math.floor(Math.random() * emojisArray.length)]}
       </Inscription>
       {users.length > 0 && <UsersWrapper>{usersList}</UsersWrapper>}
+      {users.length === 0 && (
+        <InfoWrapper>
+          <Inscription>
+            WOW! <br /> There are no people you don't subscribe to!
+          </Inscription>
+        </InfoWrapper>
+      )}
     </RecommendedWrapper>
   );
 };

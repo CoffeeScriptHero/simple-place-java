@@ -69,7 +69,7 @@ const UsersModal = ({ setShowModal = null }) => {
         username={u.username}
         id={u.id}
         mainId={mainUser.id}
-        img={u.profileImg}
+        img={u.profileImgUrl}
       />
     ));
   }
