@@ -21,7 +21,6 @@ import static com.kozarenko.util.Constants.Cloudinary.PROFILE_PICS_FOLDER;
 public class CloudinaryService {
 
   private static final Dotenv dotenv = Dotenv.load();
-
   private final Cloudinary cloudinary = new Cloudinary(CLOUDINARY_SCHEME + dotenv.get(API_KEY) + ":" +
           dotenv.get(API_SECRET) + "@" + dotenv.get(CLOUD_NAME));
 

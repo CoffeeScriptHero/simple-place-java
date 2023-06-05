@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static com.kozarenko.util.Constants.Path.H2_PATH;
+import static com.kozarenko.util.Constants.Path.*;
 import static com.kozarenko.util.Constants.Request.OPTIONS_METHOD;
 import static com.kozarenko.util.Constants.Auth.AUTHORIZATION_HEADER;
 import static com.kozarenko.util.Constants.Auth.USERNAME_ATTRIBUTE;
@@ -27,8 +27,7 @@ import static com.kozarenko.util.Constants.Auth.BEARER;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final JwtTokenUtil jwtTokenUtil;
-
-  private final List<String> allowedPaths = List.of(H2_PATH, "/api/authentication/login", "/api/authentication/registration");
+  private final List<String> allowedPaths = List.of(H2_PATH, LOGIN_PATH, REGISTRATION_PATH);
 
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain chain)

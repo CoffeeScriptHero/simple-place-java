@@ -28,6 +28,22 @@ const SearchBarUsers = ({ usernameChunk, usersLoaded, setUsersLoaded }) => {
   ));
 
   useEffect(() => {
+    const containsForbiddenSymbol = (usernameChunk) => {
+      const forbiddenSymbols = ["\\", "/", "[", "]"];
+      for (let i = 0; i < forbiddenSymbols.length; i++) {
+        if (usernameChunk.includes(forbiddenSymbols[i])) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    if (containsForbiddenSymbol(usernameChunk)) {
+      setUsers([]);
+      setUsersLoaded(true);
+      return;
+    }
+
     searchUsers(usernameChunk).then((res) => {
       setUsers(res.data);
       setUsersLoaded(true);

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-  @Query(value = "SELECT * FROM users WHERE username regexp ?1", nativeQuery = true)
+  @Query(value = "SELECT * FROM users WHERE username ~ ?1", nativeQuery = true)
   List<User> findUsersByUsernameMatchesRegex(String regex);
 
   boolean existsByUsername(String username);

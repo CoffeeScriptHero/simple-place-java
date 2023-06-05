@@ -5,6 +5,8 @@ public class Constants {
 
   public static class Path {
     public static final String H2_PATH = "/h2-console";
+    public static final String LOGIN_PATH = "/api/authentication/login";
+    public static final String REGISTRATION_PATH = "/api/authentication/registration";
   }
 
   public static class Cloudinary {
@@ -32,7 +34,6 @@ public class Constants {
   }
 
   public static class Auth {
-    public static final String NO_SUCH_USERNAME = "User with such username does not exist";
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String USERNAME_ATTRIBUTE = "username";
     public static final String BEARER = "Bearer ";
