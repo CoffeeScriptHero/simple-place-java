@@ -68,7 +68,7 @@ public class PostController {
            @RequestParam(RESULTS_PER_PAGE_QUERY) Optional<Integer> postsPerPageParam,
            @RequestAttribute(USERNAME_ATTRIBUTE) String username)
           throws NoUserWithSuchUsernameException {
-    userService.existsByUsername(username);
+    userService.throwExceptionIfNoUserWithUsername(username);
     int page = pageParam.orElse(PAGE_NUMBER_DEFAULT);
     int postsPerPage = postsPerPageParam.orElse(POSTS_PER_PAGE_DEFAULT);
     return new ResponseEntity<>(postMapper.mapForListing(

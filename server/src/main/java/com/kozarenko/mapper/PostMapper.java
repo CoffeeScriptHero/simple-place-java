@@ -71,7 +71,7 @@ public class PostMapper {
           throws NoUserWithSuchUsernameException, NoPostWithSuchIdException {
     String id = postDto.getId();
     User author = userService.findByUsername(postDto.getAuthor().getUsername());
-    postDto.getAuthor().setFollowed(followingService.isCurrUserFollowing(currentUser, author));
+    postDto.getAuthor().setFollowed(followingService.isUserFollowing(currentUser, author));
     postDto.setLiked(postLikeService.existsByIds(currentUser.getId(), id));
     postDto.setLikesNumber(postLikeService.countPostLikes(id));
     postDto.setComments(commentMapper.mapForListing(commentService.getComments(id), currentUser));

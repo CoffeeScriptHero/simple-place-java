@@ -5,10 +5,11 @@ public class Constants {
 
   public static class Path {
     public static final String H2_PATH = "/h2-console";
-    public static final String AUTHENTICATION_PATH = "/api/authentication";
   }
 
   public static class Cloudinary {
+    public static final String DEFAULT_IMG = "https://res.cloudinary.com/drrhht2jy/image/upload/v1654873620/simple-place-friends/profilePics/default.jpg";
+    public static final String DEFAULT_PUBLIC_ID = "profilePics/default";
     public static final String CLOUDINARY_SCHEME = "cloudinary://";
     public static final String CLOUD_NAME = "CLOUD_NAME";
     public static final String API_KEY = "API_KEY";

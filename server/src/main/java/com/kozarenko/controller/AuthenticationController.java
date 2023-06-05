@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.kozarenko.util.Constants.Cloudinary.DEFAULT_IMG;
 import static com.kozarenko.util.Constants.Auth.USERNAME_ATTRIBUTE;
 
 @RestController
@@ -33,6 +34,7 @@ public class AuthenticationController {
           UsernameTakenException {
     userService.checkUsernameTaken(userDto.getUsername());
     User user = userMapper.mapToUser(userDto);
+    user.setProfileImgUrl(DEFAULT_IMG);
     user.setPassword(encode(userDto.getPassword()));
     userService.save(user);
 
@@ -52,7 +54,6 @@ public class AuthenticationController {
   @GetMapping("jwt")
   public ResponseEntity<UserAccountDto> logInByJwt(@RequestAttribute(USERNAME_ATTRIBUTE) String username)
           throws NoUserWithSuchUsernameException {
-    System.out.println(username);
     User user = userService.findByUsername(username);
 
     return new ResponseEntity<>(userMapper.mapToUserAccountDto(user), HttpStatus.OK);

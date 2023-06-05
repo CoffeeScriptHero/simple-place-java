@@ -58,7 +58,7 @@ public class UserMapper {
 
   public UserAuthorDto mapToUserAuthorDto(User user, User currentUser) {
     UserAuthorDto userDto = modelMapper.map(user, UserAuthorDto.class);
-    userDto.setFollowed(followingService.isCurrUserFollowing(currentUser, user));
+    userDto.setFollowed(followingService.isUserFollowing(currentUser, user));
 
     return userDto;
   }

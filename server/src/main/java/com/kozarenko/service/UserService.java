@@ -16,10 +16,14 @@ public class UserService {
 
   private final UserRepository userRepository;
 
-  public void existsByUsername(String username) throws NoUserWithSuchUsernameException {
+  public void throwExceptionIfNoUserWithUsername(String username) throws NoUserWithSuchUsernameException {
     if (!userRepository.existsByUsername(username)) {
       throw new NoUserWithSuchUsernameException();
     }
+  }
+
+  public boolean existsByUsername(String username) {
+    return userRepository.existsByUsername(username);
   }
 
   public void checkUsernameTaken(String username) throws UsernameTakenException {

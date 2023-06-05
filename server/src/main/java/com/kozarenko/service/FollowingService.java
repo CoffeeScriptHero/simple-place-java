@@ -1,5 +1,6 @@
 package com.kozarenko.service;
 
+import com.kozarenko.model.additional.Following;
 import com.kozarenko.model.additional.keys.FollowingPk;
 import com.kozarenko.model.base.User;
 import com.kozarenko.repository.FollowingRepository;
@@ -26,7 +27,21 @@ public class FollowingService {
     return followingRepository.findUserFollowingsById(id);
   }
 
-  public boolean isCurrUserFollowing(User currentUser, User user) {
-    return followingRepository.existsById(new FollowingPk(currentUser.getId(), user.getId()));
+  public boolean isUserFollowing(User user1, User user2) {
+    return followingRepository.existsById(new FollowingPk(user1.getId(), user2.getId()));
+  }
+
+  public boolean followUnfollow(User user, User currentUser) {
+    if (!isUserFollowing(currentUser, user)) {
+      followingRepository.save(new Following(currentUser, user));
+      return true;
+    }
+
+    followingRepository.deleteById(new FollowingPk(currentUser.getId(), user.getId()));
+    return false;
+  }
+
+  public void deleteFollower(User user, User currentUser) {
+    followingRepository.deleteById(new FollowingPk(user.getId(), currentUser.getId()));
   }
 }
