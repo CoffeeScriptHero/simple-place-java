@@ -1,6 +1,6 @@
 # simple-place-java
 
-Моя курсова робота полягає у написанні бекенду мовою Java для соціальної мережі Simple Place, яку я розробив використовуючи React (https://github.com/CoffeeScriptHero/simple-place). Оригінальна версія використовує Express.js для бекенду, як базу даних - MongoDB (а також Mongoose, який працює подібно ORM фреймворкам, накшталт Hibernate).
+Моя курсова робота полягає у написанні бекенду мовою Java для соціальної мережі Simple Place, яку я розробив використовуючи React (https://github.com/CoffeeScriptHero/simple-place). Оригінальна версія використовує Express.js для бекенду, як базу даних - MongoDB (а також Mongoose, який працює подібно ORM фреймворкам, на кшталт Hibernate).
 
 ## Технології, які будуть використані
 
