@@ -33,6 +33,6 @@
 
 ![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img5.png)
 
-**Пошук користувачей:**
+**Пошук користувачів:**
 
 ![alt text](https://github.com/CoffeeScriptHero/simple-place-java/blob/master/screenshots/img6.png)
